@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nlp-app
-        image: gcr.io/nth-glass-406611/myapp:v1
+        image: gcr.io/nth-glass-406611/myapp:latest
         ports:
         - containerPort: 3005
       imagePullSecrets:
