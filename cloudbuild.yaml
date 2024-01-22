@@ -1,0 +1,21 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - 'gcr.io/nth-glass-406611/myapp:v1'
+      - .
+    timeout: 180s
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - 'gcr.io/nth-glass-406611/myapp:v1'
+  - name: gcr.io/cloud-builders/gke-deploy
+    args:
+      - run
+      - '--filename=K8s_configs/'
+      - '--image=gcr.io/nth-glass-406611/myapp:v1'
+      - '--location=us-central1'
+      - '--cluster=nth-glass-406611-gke'
+options:
+  logging: CLOUD_LOGGING_ONLY
