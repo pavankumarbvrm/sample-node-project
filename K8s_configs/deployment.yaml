@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sentiment
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: sentimentanalysis
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nlp-app
-        image: gcr.io/nth-glass-406611/myapp:latest
+        image: gcr.io/nth-glass-406611/myapp:v1
         ports:
         - containerPort: 3005
       imagePullSecrets:
