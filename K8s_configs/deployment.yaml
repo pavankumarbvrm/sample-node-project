@@ -22,8 +22,8 @@ spec:
           name: mypvc
       imagePullSecrets:
       - name: gcr-secret
-  volumes:
-  - name: mypvc
-    persistentVolumeClaim:
-      claimName: podpvc
-      readOnly: false
+    volumes:
+    - name: mypvc
+      persistentVolumeClaim:
+        claimName: podpvc
+        readOnly: false
