@@ -5,6 +5,7 @@ metadata:
   name: sentiment
 spec:
   replicas: 1
+  revisionHistoryLimit: 5
   selector:
     matchLabels:
       app: sentimentanalysis
@@ -21,7 +22,6 @@ spec:
           # volumeMounts:
           #   - mountPath: /var/lib/www/html
           #     name: mypvc
-      revisionHistoryLimit: 0
       imagePullSecrets:
         - name: gcr-secret
     # volumes:
