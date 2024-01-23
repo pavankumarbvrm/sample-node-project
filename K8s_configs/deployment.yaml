@@ -19,13 +19,13 @@ spec:
           image: gcr.io/nth-glass-406611/myapp:v1
           ports:
             - containerPort: 3005
-          # volumeMounts:
-          #   - mountPath: /var/lib/www/html
-          #     name: mypvc
+          volumeMounts:
+            - mountPath: /var/lib/www/html
+              name: models-1-0-0
       imagePullSecrets:
         - name: gcr-secret
-    # volumes:
-    #   - name: mypvc
-    #     persistentVolumeClaim:
-    #       claimName: podpvc
-    #       readOnly: false
+    volumes:
+      - name: models-1-0-0
+        persistentVolumeClaim:
+          claimName: models-1-0-0-claim
+          readOnly: false
