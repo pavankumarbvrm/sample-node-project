@@ -1,16 +1,48 @@
-apiVersion: v1
 kind: PersistentVolume
+apiVersion: v1
 metadata:
-  name: app-storage
+  name: models-1-0-0
+  labels:
+    name: models-1-0-0
 spec:
-  storageClassName: "apps"
   capacity:
-    storage: 50
+    storage: 200Gi
+  storageClassName: standard
   accessModes:
-    - ReadWriteOnce
-  claimRef:
-    namespace: default
-    name: app-storage-claim
+    - ReadOnlyMany
   gcePersistentDisk:
-    pdName: gke-pv
+    pdName: models-1-0-0
     fsType: ext4
+    readOnly: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: models-1-0-0-claim
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 200Gi
+  selector:
+    matchLabels:
+      name: models-1-0-0
+
+
+#apiVersion: v1
+#kind: PersistentVolume
+#metadata:
+#  name: app-storage
+#spec:
+#  storageClassName: "apps"
+#  capacity:
+#    storage: 50
+#  accessModes:
+#    - ReadWriteOnce
+#  claimRef:
+#    namespace: default
+#    name: app-storage-claim
+#  gcePersistentDisk:
+#    pdName: gke-pv
+#    fsType: ext4
