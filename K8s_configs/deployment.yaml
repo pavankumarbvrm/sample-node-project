@@ -18,16 +18,12 @@ spec:
         ports:
         - containerPort: 3005
         volumeMounts:
-         - mountPath: /var/lib/www/html
-           name: mypvc        
+        - mountPath: /var/lib/www/html
+          name: mypvc
       imagePullSecrets:
       - name: gcr-secret
-      revisionHistoryLimit: 3
-     volumeMounts:
-       - mountPath: /var/lib/www/html
-         name: mypvc
   volumes:
-   - name: mypvc
-     persistentVolumeClaim:
-       claimName: podpvc
-       readOnly: false
+  - name: mypvc
+    persistentVolumeClaim:
+      claimName: podpvc
+      readOnly: false
