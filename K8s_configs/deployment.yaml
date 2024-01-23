@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sentiment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sentimentanalysis
@@ -19,10 +19,10 @@ spec:
         - containerPort: 3005
         volumeMounts:
         - name: log-volume
-          mountPath: /var/log/myapp
+          mountPath: /var/log/myapp        
+      imagePullSecrets:
+      - name: gcr-secret
   volumes:
   - name: log-volume
     persistentVolumeClaim:
       claimName: myapp-log-pvc
-  imagePullSecrets:
-  - name: gcr-secret
