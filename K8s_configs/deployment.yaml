@@ -17,9 +17,9 @@ spec:
         image: gcr.io/nth-glass-406611/myapp:v1
         ports:
         - containerPort: 3005
-        volumeMounts:
-        - name: log-volume
-          mountPath: /var/log/myapp        
+        # volumeMounts:
+        # - name: log-volume
+        #   mountPath: /var/log/myapp        
       imagePullSecrets:
       - name: gcr-secret
   # volumes:
