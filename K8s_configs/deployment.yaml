@@ -22,6 +22,7 @@ spec:
           mountPath: /var/log/myapp        
       imagePullSecrets:
       - name: gcr-secret
+      revisionHistoryLimit: 3
   volumes:
     - name: pvc-demo-vol
       persistentVolumeClaim:
