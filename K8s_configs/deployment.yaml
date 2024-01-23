@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,17 +14,17 @@ spec:
         app: sentimentanalysis
     spec:
       containers:
-      - name: nlp-app
-        image: gcr.io/nth-glass-406611/myapp:v1
-        ports:
-        - containerPort: 3005
-        volumeMounts:
-        - mountPath: /var/lib/www/html
-          name: mypvc
+        - name: nlp-app
+          image: gcr.io/nth-glass-406611/myapp:v1
+          ports:
+            - containerPort: 3005
+          # volumeMounts:
+          #   - mountPath: /var/lib/www/html
+          #     name: mypvc
       imagePullSecrets:
-      - name: gcr-secret
-    volumes:
-    - name: mypvc
-      persistentVolumeClaim:
-        claimName: podpvc
-        readOnly: false
+        - name: gcr-secret
+    # volumes:
+    #   - name: mypvc
+    #     persistentVolumeClaim:
+    #       claimName: podpvc
+    #       readOnly: false
