@@ -22,7 +22,7 @@ spec:
           mountPath: /var/log/myapp        
       imagePullSecrets:
       - name: gcr-secret
-  volumes:
-  - name: log-volume
-    persistentVolumeClaim:
-      claimName: myapp-log-pvc
+  # volumes:
+  # - name: log-volume
+  #   persistentVolumeClaim:
+  #     claimName: myapp-log-pvc
