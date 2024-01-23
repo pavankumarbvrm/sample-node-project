@@ -31,7 +31,7 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 5
             periodSeconds: 10
-            successThreshold: 2
+            successThreshold: 1
             failureThreshold: 2
           livenessProbe:
             httpGet:
@@ -41,7 +41,7 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 5
             periodSeconds: 10
-            successThreshold: 2
+            successThreshold: 1
             failureThreshold: 2
           startupProbe:
             httpGet:
@@ -51,7 +51,7 @@ spec:
             initialDelaySeconds: 30
             timeoutSeconds: 5
             periodSeconds: 10
-            successThreshold: 2
+            successThreshold: 1
             failureThreshold: 2  
           
           # livenessProbe:
