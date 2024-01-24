@@ -1,0 +1,23 @@
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: pd-example
+# provisioner: pd.csi.storage.gke.io
+# volumeBindingMode: WaitForFirstConsumer
+# allowVolumeExpansion: true
+# parameters:
+#   type: pd-balanced
+# ---
+
+# pvc-pod-demo.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: standard-rwo
