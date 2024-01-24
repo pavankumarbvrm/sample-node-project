@@ -1,6 +1,7 @@
 var http = require('http');
 var express = require('express');
-var morgan = require('morgan');  // Import the morgan middleware
+var morgan = require('morgan');
+var fs = require('fs');  // Import the fs module
 
 var app = express();
 
