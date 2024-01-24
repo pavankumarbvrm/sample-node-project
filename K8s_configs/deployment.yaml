@@ -58,11 +58,11 @@ spec:
               name: mypvc
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "128Mi"
+              memory: "256Mi"
               cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "900m"
       imagePullSecrets:
         - name: gcr-secret
       volumes:
