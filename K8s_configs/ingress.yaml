@@ -664,4 +664,4 @@ spec:
           service:
             name: sentiment-service
             port:
-              number: 3005
+              number: 80
