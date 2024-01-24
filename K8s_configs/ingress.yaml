@@ -662,6 +662,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: sentiment-service
+            name: sentimentanalysis  # Corrected service name
             port:
               number: 80
