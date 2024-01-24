@@ -7,9 +7,9 @@ spec:
   selector:
     app: sentimentanalysis
   ports:
-  - port: 80
+  - port: 3005
     targetPort: 3005
-
+    nodePort: 30005  # Choose a port within the allowed range
 ---
 apiVersion: v1
 kind: Service
@@ -20,5 +20,6 @@ spec:
   selector:
     app: sentimentanalysis-3006
   ports:
-  - port: 80
+  - port: 3006
     targetPort: 3006
+    nodePort: 30006  # Choose a port within the allowed range
