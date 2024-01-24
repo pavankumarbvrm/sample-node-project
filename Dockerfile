@@ -5,6 +5,6 @@ COPY package.json ./
 RUN npm install
 RUN npm install -g pm2
 COPY . .
-#CMD ["pm2", "start", "app.js", "--watch", "--no-daemon"]
-CMD ["node","app.js"]
+CMD ["pm2", "start", "app.js", "--name", "my-app"]
+# CMD ["node","app.js"]
 EXPOSE 3005
