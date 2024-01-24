@@ -15,16 +15,16 @@ spec:
                 port:
                   number: 80
             pathType: Prefix
-    - host: pavan3.juno.fi
-      http:
-        paths:
-          - path: /
-            backend:
-              service:
-                name: sentimentanalysis-3006
-                port:
-                  number: 80
-            pathType: Prefix
+    # - host: pavan3.juno.fi
+    #   http:
+    #     paths:
+    #       - path: /
+    #         backend:
+    #           service:
+    #             name: sentimentanalysis-3006
+    #             port:
+    #               number: 80
+    #         pathType: Prefix
 # ---
 # apiVersion: v1
 # kind: Service
