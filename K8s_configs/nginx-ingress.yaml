@@ -648,20 +648,3 @@ webhooks:
     resources:
     - ingresses
   sideEffects: None
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: sentiment-ingress
-spec:
-  rules:
-  - host: "pavan2.juno.fi"
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/"
-        backend:
-          service:
-            name: sentimentanalysis
-            port:
-              number: 3005  # Match the targetPort of the Service
