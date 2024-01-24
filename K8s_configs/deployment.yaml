@@ -4,7 +4,7 @@ metadata:
   name: sentiment
 spec:
   replicas: 1
-  revisionHistoryLimit: 5
+  revisionHistoryLimit: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -77,7 +77,7 @@ metadata:
   name: sentiment-3006
 spec:
   replicas: 1
-  revisionHistoryLimit: 5
+  revisionHistoryLimit: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -126,9 +126,9 @@ spec:
           #   periodSeconds: 10
           #   successThreshold: 1
           #   failureThreshold: 2  
-          volumeMounts:
-            - mountPath: /var/lib/www/html
-              name: mypvc
+          # volumeMounts:
+          #   - mountPath: /var/lib/www/html
+          #     name: mypvc
           # resources:
           #   requests:
           #     memory: "128Mi"
@@ -138,7 +138,7 @@ spec:
           #     cpu: "500m"
       imagePullSecrets:
         - name: gcr-secret
-      volumes:
-        - name: mypvc
-          persistentVolumeClaim:
-            claimName: pvc-demo
+      # volumes:
+      #   - name: mypvc
+      #     persistentVolumeClaim:
+      #       claimName: pvc-demo
