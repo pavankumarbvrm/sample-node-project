@@ -648,34 +648,20 @@ webhooks:
     resources:
     - ingresses
   sideEffects: None
-# ---  
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: ingress-resource
-# spec:
-#   rules:
-#   - host: "dev.api.juno.fi"
-#     http:
-#       paths:
-#       - backend:
-#           service:
-#             name: sentimentanalysis
-#             port:
-#               number: 80
-#   - host: "dev.app.juno.fi"
-#     http:
-#       paths:
-#       - backend:
-#           service:
-#             name: sentimentanalysis
-#             port:
-#               number: 80
-#   - host: "dev.juno.fi"
-#     http:
-#       paths:
-#       - backend:
-#           service:
-#             name: sentimentanalysis
-#             port:
-#               number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sentiment-ingress
+spec:
+  rules:
+  - host: "pavan2.juno.fi"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sentiment-service
+            port:
+              number: 3005
