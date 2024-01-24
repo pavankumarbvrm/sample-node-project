@@ -662,6 +662,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: sentimentanalysis  # Corrected service name
+            name: sentimentanalysis
             port:
-              number: 80
+              number: 3005  # Match the targetPort of the Service
