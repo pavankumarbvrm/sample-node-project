@@ -62,3 +62,31 @@ spec:
         - name: mypvc
           persistentVolumeClaim:
             claimName: pvc-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: another-sentiment
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: another-sentimentanalysis
+  template:
+    metadata:
+      labels:
+        app: another-sentimentanalysis
+    spec:
+      containers:
+        - name: another-nlp-app
+          image: gcr.io/nth-glass-406611/anotherapp:v1  # Replace with the actual image for your second app
+          ports:
+            - containerPort: 4006  # Update to match the port used by your second app
+      imagePullSecrets:
+        - name: gcr-secret
