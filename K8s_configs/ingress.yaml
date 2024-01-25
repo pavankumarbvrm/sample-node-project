@@ -24,4 +24,4 @@ spec:
               service:
                 name: another-sentimentanalysis
                 port:
-                  number: 81
+                  number: 3006
