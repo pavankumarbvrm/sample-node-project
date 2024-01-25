@@ -21,5 +21,10 @@ HTTP SERVER OLUŞTURULDU
 
 */
 http.createServer(app).listen(app.get('port'), function(){
-	console.log('Sistem ' + app.get('port') + ' Portu Üzerinde Çalışıyor.');
+    console.log('Sistem ' + app.get('port') + ' Portu Üzerinde Çalışıyor.');
+});
+
+// Add support for port 4005
+http.createServer(app).listen(4005, function(){
+    console.log('Sistem 4005 Portu Üzerinde Çalışıyor.');
 });
