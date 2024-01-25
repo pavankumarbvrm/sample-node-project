@@ -85,7 +85,7 @@ spec:
     spec:
       containers:
         - name: another-nlp-app
-          image: gcr.io/nth-glass-406611/app:v1  # Replace with the actual image for your second app
+          image: gcr.io/nth-glass-406611/myapp:v1
           ports:
             - containerPort: 3006  # Update to match the port used by your second app
       imagePullSecrets:
