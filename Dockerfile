@@ -10,4 +10,4 @@ COPY . .
 CMD ["node", "app.js"]
 
 # Expose both ports
-EXPOSE 3005 3006
+EXPOSE 3005 4005
