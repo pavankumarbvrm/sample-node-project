@@ -20,4 +20,4 @@ spec:
     app: another-sentimentanalysis  # Update this selector according to your app.js labels
   ports:
   - port: 80  # Use any available port you prefer
-    targetPort: 3006  # Update this to match the port used by your second app
+    targetPort: 4005  # Update this to match the port used by your second app
