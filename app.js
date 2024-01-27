@@ -1,24 +1,26 @@
+/*
+
+GEREKLİ PAKETLER YÜKLENİYOR...
+
+*/
 var http = require('http');
 var express = require('express');
 
 var app = express();
 
-var port = process.env.PORT || 3005; // Default to 3005 if PORT is not specified
+app.set('port', process.env.PORT || 3005); // GİRİŞ PORTU AYARLANDI
+app.set('views', __dirname + '/app/server/views'); // VIEW KLASÖRÜ TANITILDI
+app.set('view engine', 'ejs'); // VIEW ENGINE AYARLANDI
+app.use(express.static(__dirname + '/app/public')); // KULLANICILAR TARAFINDAN ERİŞİLEBİLEN KLASÖR TANIMLANDI
 
-app.set('port', port);
-app.set('views', __dirname + '/app/server/views');
-app.set('view engine', 'ejs');
-app.use(express.static(__dirname + '/app/public'));
+require('./app/routes')(app); // ROUTE DOSYASI ÇAĞIRILDI
 
-require('./app/routes')(app);
+/*
 
-// Create an HTTP server instance for the specified port
-http.createServer(app).listen(port, function(){
-    console.log('Sistem ' + port + ' Portu Üzerinde Çalışıyor.');
-});
+HTTP SERVER OLUŞTURULDU
 
-// Create another HTTP server instance for the optional port (4005)
-var anotherPort = 4005;
-http.createServer(app).listen(anotherPort, function(){
-    console.log('Sistem ' + anotherPort + ' Portu Üzerinde Çalışıyor.');
+*/
+http.createServer(app).listen(app.get('port'), function(){
+    console.log('Sistem ' + app.get('port') + ' Portu Üzerinde Çalışıyor.');
+    console.log('output from ' + app.get('port') + ' port application');
 });
