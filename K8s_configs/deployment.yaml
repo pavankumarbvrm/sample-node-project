@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,49 +20,30 @@ spec:
         app: sentimentanalysis
     spec:
       containers:
-        - name: nlp-app
-          image: gcr.io/nth-glass-406611/myapp:v1
-          ports:
-            - containerPort: 3005
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 3005
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 2
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 3005
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 2
-          startupProbe:
-            httpGet:
-              path: /
-              port: 3005
-              scheme: HTTP
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 2  
+        - name: js-container
+          image: js-image
           volumeMounts:
-            - mountPath: /var/lib/www/html  # Adjust the mount path based on your container's requirements
-              name: mypvc
+            - name: js-volume
+              mountPath: /path/to/script.js
+              subPath: script.js
+            - name: nlp-app
+              image: gcr.io/nth-glass-406611/myapp:v1
+              ports:
+                - containerPort: 3005
+              volumeMounts:
+                - name: js-volume
+                  mountPath: /path/to/script.js
+                  subPath: script.js
       imagePullSecrets:
         - name: gcr-secret
       volumes:
-        - name: mypvc
-          persistentVolumeClaim:
-            claimName: pvc-demo
+        - name: js-volume
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: gcp-secret-provider
+
 ---
 apiVersion: apps/v1
 kind: Deployment
