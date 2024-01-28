@@ -8,6 +8,9 @@ metadata:
     app: fluentd-logging
     k8s-app: fluentd-logging
 spec:
+  selector:
+    matchLabels:
+      name: fluentd-elasticsearch  # Match the labels from metadata.labels
   template:
     metadata:
       labels:
@@ -17,16 +20,10 @@ spec:
         - name: fluentd-elasticsearch
           image: gcr.io/google_containers/fluentd-elasticsearch:1.19
           volumeMounts:
-          - name: varlog
-            mountPath: /var/log
-          # - name: varlibdockercontainers
-          #   mountPath: /var/lib/docker/containers
-          #   readOnly: true
+            - name: varlog
+              mountPath: /var/log
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: varlog
-        hostPath:
-          path: /var/log
-      # - name: varlibdockercontainers
-      #   hostPath:
-      #     path: /var/lib/docker/containers
+        - name: varlog
+          hostPath:
+            path: /var/log
