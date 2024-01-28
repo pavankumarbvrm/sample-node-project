@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,11 +5,6 @@ metadata:
 spec:
   replicas: 1
   revisionHistoryLimit: 5
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
   selector:
     matchLabels:
       app: sentimentanalysis
@@ -20,20 +14,14 @@ spec:
         app: sentimentanalysis
     spec:
       containers:
-        - name: js-container
-          image: js-image
+        - name: nlp-app
+          image: gcr.io/nth-glass-406611/myapp:v1
+          ports:
+            - containerPort: 3005
           volumeMounts:
             - name: js-volume
-              mountPath: /path/to/script.js
+              mountPath: /app
               subPath: script.js
-            - name: nlp-app
-              image: gcr.io/nth-glass-406611/myapp:v1
-              ports:
-                - containerPort: 3005
-              volumeMounts:
-                - name: js-volume
-                  mountPath: /path/to/script.js
-                  subPath: script.js
       imagePullSecrets:
         - name: gcr-secret
       volumes:
@@ -43,6 +31,7 @@ spec:
             readOnly: true
             volumeAttributes:
               secretProviderClass: gcp-secret-provider
+
 
 ---
 apiVersion: apps/v1
