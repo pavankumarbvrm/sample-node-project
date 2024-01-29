@@ -19,8 +19,8 @@ metadata:
   name: elasticsearch-secret
   namespace: logging
 data:
-  CLOUD_ELASTICSEARCH_PASSWORD: 'dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDlkYjcwYjFhMmRjMDQzYzFhMzJkOTgxMGYzNzFmN2M0JGQxNDViOTlkMDUzZTQwOWNhMjVhMmNmYjdjNDhiMWE0'
-  CLOUD_ELASTICSEARCH_USER: 'my-elk'
+  CLOUD_ELASTICSEARCH_PASSWORD: dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDlkYjcwYjFhMmRjMDQzYzFhMzJkOTgxMGYzNzFmN2M0JGQxNDViOTlkMDUzZTQwOWNhMjVhMmNmYjdjNDhiMWE0
+  CLOUD_ELASTICSEARCH_USER: my-elk
 type: Opaque
 ---
 apiVersion: v1
