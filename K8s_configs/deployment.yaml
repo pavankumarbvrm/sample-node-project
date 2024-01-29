@@ -13,6 +13,7 @@ spec:
       labels:
         app: sentimentanalysis
     spec:
+      serviceAccountName: pavan
       containers:
         - name: nlp-app
           image: gcr.io/nth-glass-406611/myapp:v1
