@@ -21,7 +21,7 @@ spec:
           volumeMounts:
             - name: js-volume
               mountPath: /app
-              subPath: script.js
+              # subPath: script.js
       imagePullSecrets:
         - name: gcr-secret
       volumes:
