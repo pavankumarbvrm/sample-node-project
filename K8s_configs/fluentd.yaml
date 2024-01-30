@@ -252,7 +252,7 @@ spec:
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
         - name: app-logs
-          mountPath: /varlog
+          mountPath: /var/log
       terminationGracePeriodSeconds: 10
       volumes:
       - name: varlog
