@@ -1,40 +1,3 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: sentiment
-# spec:
-#   replicas: 1
-#   revisionHistoryLimit: 5
-#   selector:
-#     matchLabels:
-#       app: sentimentanalysis
-#   template:
-#     metadata:
-#       labels:
-#         app: sentimentanalysis
-#     spec:
-#       # serviceAccountName: pavan
-#       containers:
-#         - name: nlp-app
-#           image: gcr.io/nth-glass-406611/myapp:v1
-#           ports:
-#             - containerPort: 3005
-#           # volumeMounts:
-#           #   - name: js-volume
-#           #     mountPath: /app
-#           #     subPath: dev.js
-#       imagePullSecrets:
-#         - name: gcr-secret
-#       # volumes:
-#       #   - name: js-volume
-#       #     csi:
-#       #       driver: secrets-store.csi.k8s.io
-#       #       readOnly: true
-#       #       volumeAttributes:
-#       #         secretProviderClass: gcp-secret-provider
-
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -60,5 +23,46 @@ spec:
           image: gcr.io/nth-glass-406611/myapp:v2
           ports:
             - containerPort: 4005  # Update to match the port used by your second app
+          volumeMounts:
+            - name: config-volume
+              mountPath: /path/to/config
+            - name: setting-volume
+              mountPath: /path/to/setting
       imagePullSecrets:
         - name: gcr-secret
+      volumes:
+        - name: config-volume
+          configMap:
+            name: my-config
+        - name: setting-volume
+          configMap:
+            name: my-setting
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: another-sentiment
+# spec:
+#   replicas: 1
+#   revisionHistoryLimit: 5
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 2
+#       maxUnavailable: 0
+#   selector:
+#     matchLabels:
+#       app: another-sentimentanalysis
+#   template:
+#     metadata:
+#       labels:
+#         app: another-sentimentanalysis
+#     spec:
+#       containers:
+#         - name: another-nlp-app
+#           image: gcr.io/nth-glass-406611/myapp:v2
+#           ports:
+#             - containerPort: 4005  # Update to match the port used by your second app
+#       imagePullSecrets:
+#         - name: gcr-secret
