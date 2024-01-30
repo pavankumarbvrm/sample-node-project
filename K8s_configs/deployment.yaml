@@ -73,3 +73,38 @@ spec:
             claimName: app-logs-pvc
       imagePullSecrets:
         - name: gcr-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: sentimentanalysis
+  template:
+    metadata:
+      labels:
+        app: sentimentanalysis
+    spec:
+      containers:
+        - name: another-nlp-app
+          image: gcr.io/nth-glass-406611/myapp:v1
+          ports:
+            - containerPort: 4005
+          volumeMounts:
+            - name: app-logs-volume
+              mountPath: /var/log/myapp
+      volumes:
+        - name: app-logs-volume
+          persistentVolumeClaim:
+            claimName: app-logs-pvc
+      imagePullSecrets:
+        - name: gcr-secret
