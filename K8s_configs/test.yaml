@@ -16,7 +16,7 @@ metadata:
   name: mypod
   namespace: default
 spec:
-  serviceAccountName: secret-ksa
+  serviceAccountName: secret-gsa@nth-glass-406611.iam.gserviceaccount.com
   containers:
   - image: gcr.io/nth-glass-406611/myapp:v1
     name: mypod
