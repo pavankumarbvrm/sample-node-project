@@ -19,19 +19,19 @@ spec:
           image: gcr.io/nth-glass-406611/myapp:v1
           ports:
             - containerPort: 3005
-          volumeMounts:
-            - name: js-volume
-              mountPath: /app
-              subPath: dev.js
+          # volumeMounts:
+          #   - name: js-volume
+          #     mountPath: /app
+          #     subPath: dev.js
       imagePullSecrets:
         - name: gcr-secret
-      volumes:
-        - name: js-volume
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: gcp-secret-provider
+      # volumes:
+      #   - name: js-volume
+      #     csi:
+      #       driver: secrets-store.csi.k8s.io
+      #       readOnly: true
+      #       volumeAttributes:
+      #         secretProviderClass: gcp-secret-provider
 
 
 ---
