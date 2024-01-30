@@ -103,7 +103,7 @@ data:
     # Include the custom configuration for myapp
     @include myapp.conf
 
-  myapp.conf: |
+myapp.conf: |
     # Fluentd configuration for myapp
     <source>
       @id myapp
@@ -123,6 +123,7 @@ data:
       port 9200
       logstash_format true
       logstash_prefix myapp
+      index_name myapp_index  # Specify the new index pattern
       <buffer>
         flush_interval 5s
       </buffer>
