@@ -109,7 +109,7 @@ data:
       @id myapp
       @type tail
       path /var/log/myapp/*.log
-      pos_file /var/log/myapp/myapp.log.pos
+      pos_file /var/log/myapp/app.log.pos
       tag myapp
       <parse>
         @type json
