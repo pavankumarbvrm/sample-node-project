@@ -25,9 +25,9 @@ spec:
             - containerPort: 4005  # Update to match the port used by your second app
           volumeMounts:
             - name: config-volume
-              mountPath: /path/to/config
+              mountPath: /app
             - name: setting-volume
-              mountPath: /path/to/setting
+              mountPath: /app
       imagePullSecrets:
         - name: gcr-secret
       volumes:
