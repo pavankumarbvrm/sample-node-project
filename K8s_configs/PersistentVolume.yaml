@@ -1,17 +1,17 @@
-# PersistentVolume for application logs
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: app-logs-pv
-spec:
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: manual
-  hostPath:
-    path: /mnt/app-logs
+# # PersistentVolume for application logs
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: app-logs-pv
+# spec:
+#   capacity:
+#     storage: 10Gi
+#   accessModes:
+#     - ReadWriteMany
+#   persistentVolumeReclaimPolicy: Retain
+#   storageClassName: manual
+#   hostPath:
+#     path: /mnt/app-logs
 ---
 # PersistentVolumeClaim for application logs
 apiVersion: v1
@@ -20,11 +20,13 @@ metadata:
   name: app-logs-pvc
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: manual
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 30Gi
+  storageClassName: standard-rwo
+  hostPath:
+    path: /mnt/app-logs  
 
 
 # apiVersion: v1
