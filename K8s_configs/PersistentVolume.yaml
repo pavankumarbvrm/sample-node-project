@@ -25,8 +25,8 @@ spec:
     requests:
       storage: 30Gi
   storageClassName: standard-rwo
-  hostPath:
-    path: /mnt/app-logs  
+  # hostPath:
+  #   path: /mnt/app-logs  
 
 
 # apiVersion: v1
