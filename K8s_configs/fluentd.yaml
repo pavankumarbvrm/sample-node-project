@@ -95,7 +95,39 @@ data:
       tls On
       tls.verify Off
       Suppress_Type_Name On
+      
+  fluent.conf: |
+    # Fluentd configuration file
+    # Include the default Kubernetes configuration
+    @include kubernetes.conf
+    # Include the custom configuration for myapp
+    @include myapp.conf
 
+  myapp.conf: |
+    # Fluentd configuration for myapp
+    <source>
+      @id myapp
+      @type tail
+      path /var/log/myapp/*.log
+      pos_file /var/log/myapp/myapp.log.pos
+      tag myapp
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+    <match myapp>
+      @id elasticsearch
+      @type elasticsearch
+      host elasticsearch.default
+      port 9200
+      logstash_format true
+      logstash_prefix myapp
+      <buffer>
+        flush_interval 5s
+      </buffer>
+    </match>
+    
   parsers.conf: |
     [PARSER]
         Name   apache
