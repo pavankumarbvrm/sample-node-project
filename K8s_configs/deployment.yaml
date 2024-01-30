@@ -63,6 +63,13 @@ spec:
         - name: another-nlp-app
           image: gcr.io/nth-glass-406611/myapp:v2
           ports:
-            - containerPort: 4005  # Update to match the port used by your second app
+            - containerPort: 4005
+          volumeMounts:
+            - name: app-logs-volume
+              mountPath: /var/log/alternatives.log
+      volumes:
+        - name: app-logs-volume
+          persistentVolumeClaim:
+            claimName: app-logs-pvc
       imagePullSecrets:
         - name: gcr-secret
