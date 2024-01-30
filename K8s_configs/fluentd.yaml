@@ -251,8 +251,8 @@ spec:
           readOnly: true
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
-        - name: app-logs
-          mountPath: /var/log/nginx
+        # - name: app-logs
+        #   mountPath: /var/log/nginx
       terminationGracePeriodSeconds: 10
       volumes:
       - name: varlog
@@ -264,9 +264,9 @@ spec:
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
-      - name: app-logs
-        persistentVolumeClaim:
-          claimName: app-logs-pvc
+      # - name: app-logs
+      #   persistentVolumeClaim:
+      #     claimName: app-logs-pvc
       serviceAccountName: fluent-bit
       tolerations:
       - key: node-role.kubernetes.io/master
