@@ -98,7 +98,7 @@ spec:
         - name: another-nlp-app
           image: gcr.io/nth-glass-406611/myapp:v1
           ports:
-            - containerPort: 4005
+            - containerPort: 3005
           volumeMounts:
             - name: app-logs-volume
               mountPath: /var/log/myapp
