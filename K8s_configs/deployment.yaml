@@ -38,41 +38,41 @@
 #           configMap:
 #             name: my-setting
 
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: another-sentiment
-spec:
-  replicas: 1
-  revisionHistoryLimit: 5
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
-  selector:
-    matchLabels:
-      app: another-sentimentanalysis
-  template:
-    metadata:
-      labels:
-        app: another-sentimentanalysis
-    spec:
-      containers:
-        - name: another-nlp-app
-          image: gcr.io/nth-glass-406611/myapp:v2
-          ports:
-            - containerPort: 4005
-          volumeMounts:
-            - name: app-logs-volume
-              mountPath: /var/log/myapp
-      volumes:
-        - name: app-logs-volume
-          persistentVolumeClaim:
-            claimName: app-logs-pvc
-      imagePullSecrets:
-        - name: gcr-secret
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: another-sentiment
+# spec:
+#   replicas: 1
+#   revisionHistoryLimit: 5
+#   strategy:
+#     type: RollingUpdate
+#     rollingUpdate:
+#       maxSurge: 2
+#       maxUnavailable: 0
+#   selector:
+#     matchLabels:
+#       app: another-sentimentanalysis
+#   template:
+#     metadata:
+#       labels:
+#         app: another-sentimentanalysis
+#     spec:
+#       containers:
+#         - name: another-nlp-app
+#           image: gcr.io/nth-glass-406611/myapp:v2
+#           ports:
+#             - containerPort: 4005
+#           volumeMounts:
+#             - name: app-logs-volume
+#               mountPath: /var/log/myapp
+#       volumes:
+#         - name: app-logs-volume
+#           persistentVolumeClaim:
+#             claimName: app-logs-pvc
+#       imagePullSecrets:
+#         - name: gcr-secret
 ---
 apiVersion: apps/v1
 kind: Deployment
