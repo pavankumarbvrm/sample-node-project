@@ -1,25 +1,20 @@
-/*
-
-GEREKLİ PAKETLER YÜKLENİYOR...
-
-*/
 var http = require('http');
 var express = require('express');
+var winston = require('winston');
 
 var app = express();
 
-app.set('port', process.env.PORT || 4005); // GİRİŞ PORTU AYARLANDI
-app.set('views', __dirname + '/app/server/views'); // VIEW KLASÖRÜ TANITILDI
-app.set('view engine', 'ejs'); // VIEW ENGINE AYARLANDI
-app.use(express.static(__dirname + '/app/public')); // KULLANICILAR TARAFINDAN ERİŞİLEBİLEN KLASÖR TANIMLANDI
+// Configure Winston to write logs to a file in /var/log/myapp
+winston.add(new winston.transports.File({ filename: '/var/log/myapp/app.log' }));
 
-require('./app/routes')(app); // ROUTE DOSYASI ÇAĞIRILDI
+app.set('port', process.env.PORT || 4005);
+app.set('views', __dirname + '/app/server/views');
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/app/public'));
 
-/*
+require('./app/routes')(app);
 
-HTTP SERVER OLUŞTURULDU
-
-*/
 http.createServer(app).listen(app.get('port'), function(){
     console.log('output from ' + app.get('port') + ' port application');
+    winston.info('Application started on port ' + app.get('port'));
 });
