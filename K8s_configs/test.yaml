@@ -13,13 +13,13 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mypod
+  name: mypods
   namespace: default
 spec:
   serviceAccountName: nth-glass-406611.svc.id.goog
   containers:
   - image: gcr.io/nth-glass-406611/myapp:v1
-    name: mypod
+    name: mypods
     resources:
       requests:
         cpu: 100m
