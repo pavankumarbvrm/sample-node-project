@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: logging
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: fluent-bit
@@ -77,6 +82,7 @@ data:
         K8S-Logging.Exclude Off
         Annotations         Off
         Labels              On
+  
   output-elasticsearch.conf: |
     [OUTPUT]
       Name es
@@ -89,23 +95,6 @@ data:
       tls On
       tls.verify Off
       Suppress_Type_Name On
-
-
-
-  # output-elasticsearch.conf: |
-  #   [OUTPUT]
-  #       Name            es
-  #       Match           *
-  #       Host            ${CLOUD_ELASTICSEARCH_HOST}
-  #       Port            ${CLOUD_ELASTICSEARCH_PORT}
-  #       Cloud_ID        ${CLOUD_ELASTICSEARCH_ID}
-  #       Cloud_Auth      ${CLOUD_ELASTICSEARCH_USER}:${CLOUD_ELASTICSEARCH_PASSWORD}
-  #       Logstash_Format On
-  #       Logstash_Prefix my-cluster
-  #       Replace_Dots    On
-  #       Retry_Limit     False
-  #       tls             On
-  #       tls.verify      Off
 
   parsers.conf: |
     [PARSER]
@@ -262,6 +251,8 @@ spec:
           readOnly: true
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
+        - name: app-logs
+          mountPath: /mnt/app-logs
       terminationGracePeriodSeconds: 10
       volumes:
       - name: varlog
@@ -273,6 +264,9 @@ spec:
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
+      - name: app-logs
+        persistentVolumeClaim:
+          claimName: app-logs-pvc
       serviceAccountName: fluent-bit
       tolerations:
       - key: node-role.kubernetes.io/master
