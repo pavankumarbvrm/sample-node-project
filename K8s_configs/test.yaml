@@ -25,7 +25,7 @@ spec:
         cpu: 100m
     tty: true
     volumeMounts:
-      - mountPath: "/var"
+      - mountPath: "/var/log"
         name: mysecret
   volumes:
   - name: mysecret
