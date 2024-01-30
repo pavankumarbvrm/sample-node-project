@@ -18,7 +18,7 @@ metadata:
 spec:
   serviceAccountName: secret-ksa
   containers:
-  - image: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+  - image: gcr.io/nth-glass-406611/myapp:v1
     name: mypod
     resources:
       requests:
