@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: another-nlp-app
-          image: gcr.io/nth-glass-406611/myapp:v2
+          image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v2
           ports:
             - containerPort: 4005
       #     volumeMounts:
