@@ -99,6 +99,32 @@ spec:
           image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v1
           ports:
             - containerPort: 3005
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp-v1
+  template:
+    metadata:
+      labels:
+        app: myapp-v1
+    spec:
+      containers:
+      - name: myapp-container
+        image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v1
+        command: ["pm2-runtime", "start", "app.js", "--name", "my-app"]
+        ports:
+            - containerPort: 3005
+      - name: myapp2-container
+        image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v1
+        command: ["pm2-runtime", "start", "app2.js", "--name", "my-app2"]
+        ports:
+            - containerPort: 4005
+            
       #     volumeMounts:
       #       - name: app-logs-volume
       #         mountPath: /var/log/myapp
