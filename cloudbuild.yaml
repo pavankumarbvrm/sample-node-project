@@ -16,8 +16,8 @@ steps:
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args: ['run', '--filename=K8s_configs/deployment-v1.yaml', '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1', '--location=us-central1', '--cluster=applied-well-406512-gke-cluster']
     
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['rm', '-r', 'output/suggested']
+  # - name: 'gcr.io/cloud-builders/gsutil'
+  #   args: ['rm', '-r', 'output/suggested']
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args: ['run', '--filename=K8s_configs/deployment-v2.yaml', '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp2:v2', '--location=us-central1', '--cluster=applied-well-406512-gke-cluster']
