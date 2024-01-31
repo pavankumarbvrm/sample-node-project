@@ -19,7 +19,7 @@ steps:
       - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
       - '--location=us-central1'
       - '--cluster=applied-well-406512-gke-cluster'
-      - '--command=pm2-runtime start app.js --name my-app'
+      # - '--command=pm2-runtime start app.js --name my-app'
 
   - name: gcr.io/cloud-builders/gke-deploy
     args:
@@ -28,7 +28,7 @@ steps:
       - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
       - '--location=us-central1'
       - '--cluster=applied-well-406512-gke-cluster'
-      - '--command=pm2-runtime start app2.js --name my-app2'
+      # - '--command=pm2-runtime start app2.js --name my-app2'
 
 
 
