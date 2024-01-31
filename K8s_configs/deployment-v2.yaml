@@ -1,28 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: another-sentiment
+  name: myapp-v2
 spec:
-  replicas: 1
-  revisionHistoryLimit: 5
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
+  replicas: 3
   selector:
     matchLabels:
-      app: another-sentimentanalysis
+      app: myapp-v2
   template:
     metadata:
       labels:
-        app: another-sentimentanalysis
+        app: myapp-v2
     spec:
       containers:
-        - name: another-nlp-app
-          image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v2
-          ports:
+      - name: myapp2-container
+        image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v2
+        command: ["pm2-runtime", "start", "app2.js", "--name", "my-app2"]
+        ports:
             - containerPort: 4005
+            
       #     volumeMounts:
       #       - name: app-logs-volume
       #         mountPath: /var/log/myapp
