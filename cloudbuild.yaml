@@ -3,20 +3,20 @@ steps:
     args:
       - build
       - '-t'
-      - 'gcr.io/applied-well-406512/myapp:v1'
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
       - .
     timeout: 180s
 
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - 'gcr.io/applied-well-406512/myapp:v1'
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
 
   - name: gcr.io/cloud-builders/docker
     args:
       - build
       - '-t'
-      - 'gcr.io/applied-well-406512/myapp:v2'
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'
       - -f
       - 'Dockerfile2'
       - .
@@ -25,22 +25,22 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - 'gcr.io/applied-well-406512/myapp:v2'
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'
 
   - name: gcr.io/cloud-builders/gke-deploy
     args:
       - run
       - '--filename=K8s_configs/deployment-v1.yaml'  # Specify the deployment file for v1
-      - '--image=gcr.io/applied-well-406512/myapp:v1'
-      - '--location=us-central1f'
+      - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+      - '--location=us-central1'
       - '--cluster=applied-well-406512-gke'
 
   - name: gcr.io/cloud-builders/gke-deploy
     args:
       - run
       - '--filename=K8s_configs/deployment-v2.yaml'  # Specify the deployment file for v2
-      - '--image=gcr.io/applied-well-406512/myapp:v2'
-      - '--location=us-central1f'
+      - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'
+      - '--location=us-central1'
       - '--cluster=applied-well-406512-gke'
       
 options:
@@ -51,7 +51,7 @@ options:
 #     args:
 #       - build
 #       - '-t'
-#       - 'gcr.io/applied-well-406512/myapp:v1'
+#       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
 #       - .
 #     timeout: 180s
 
@@ -59,7 +59,7 @@ options:
 #     args:
 #       - build
 #       - '-t'
-#       - 'gcr.io/applied-well-406512/myapp:v2'  # New image tag for Dockerfile2
+#       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'  # New image tag for Dockerfile2
 #       - -f
 #       - 'Dockerfile2'  # Specify Dockerfile2
 #       - .
@@ -68,19 +68,19 @@ options:
 #   - name: gcr.io/cloud-builders/docker
 #     args:
 #       - push
-#       - 'gcr.io/applied-well-406512/myapp:v1'
+#       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
       
 #   - name: gcr.io/cloud-builders/docker
 #     args:
 #       - push
-#       - 'gcr.io/applied-well-406512/myapp:v2'  # Push the new image
+#       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'  # Push the new image
 
 #   - name: gcr.io/cloud-builders/gke-deploy
 #     args:
 #       - run
 #       - '--filename=K8s_configs/'
-#       - '--image=gcr.io/applied-well-406512/myapp:v1'
-#       - '--location=us-central1f'
+#       - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+#       - '--location=us-central1'
 #       - '--cluster=applied-well-406512-gke'
       
 # options:
@@ -91,19 +91,19 @@ options:
 # #     args:
 # #       - build
 # #       - '-t'
-# #       - 'gcr.io/applied-well-406512/myapp:v1'
+# #       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
 # #       - .
 # #     timeout: 180s
 # #   - name: gcr.io/cloud-builders/docker
 # #     args:
 # #       - push
-# #       - 'gcr.io/applied-well-406512/myapp:v1'
+# #       - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
 # #   - name: gcr.io/cloud-builders/gke-deploy
 # #     args:
 # #       - run
 # #       - '--filename=K8s_configs/'
-# #       - '--image=gcr.io/applied-well-406512/myapp:v1'
-# #       - '--location=us-central1f'
+# #       - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+# #       - '--location=us-central1'
 # #       - '--cluster=applied-well-406512-gke'
 # # options:
 # #   logging: CLOUD_LOGGING_ONLY
