@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
         - name: another-nlp-app
-          image: gcr.io/nth-glass-406611/myapp:v1
+          image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v1
           ports:
             - containerPort: 3005
       #     volumeMounts:
