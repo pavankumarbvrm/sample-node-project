@@ -1,26 +1,35 @@
-/*
-
-GEREKLİ PAKETLER YÜKLENİYOR...
-
-*/
 var http = require('http');
 var express = require('express');
+var winston = require('winston');
+var path = require('path');
 
 var app = express();
 
-app.set('port', process.env.PORT || 3005); // GİRİŞ PORTU AYARLANDI
-app.set('views', __dirname + '/app/server/views'); // VIEW KLASÖRÜ TANITILDI
-app.set('view engine', 'ejs'); // VIEW ENGINE AYARLANDI
-app.use(express.static(__dirname + '/app/public')); // KULLANICILAR TARAFINDAN ERİŞİLEBİLEN KLASÖR TANIMLANDI
+// Set up Winston to write logs to a file
+const logFilePath = path.join('/var/log', 'application.log');
+winston.add(new winston.transports.File({ filename: logFilePath }));
 
-require('./app/routes')(app); // ROUTE DOSYASI ÇAĞIRILDI
+app.set('port', process.env.PORT || 3005);
+app.set('views', path.join(__dirname, '/app/server/views'));
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, '/app/public')));
 
-/*
+require('./app/routes')(app);
 
-HTTP SERVER OLUŞTURULDU
-
-*/
-http.createServer(app).listen(app.get('port'), function(){
+http.createServer(app).listen(app.get('port'), function() {
     console.log('Sistem ' + app.get('port') + ' Portu Üzerinde Çalışıyor.');
     console.log('output from ' + app.get('port') + ' port application');
+    winston.info('Sistem ' + app.get('port') + ' Portu Üzerinde Çalışıyor.');  // Log to file
+    winston.info('Output from ' + app.get('port') + ' port application');    // Log to file
+});
+
+// Log unhandled exceptions to the file
+process.on('uncaughtException', (err) => {
+    winston.error('Uncaught Exception:', err.message, err);
+    process.exit(1);
+});
+
+// Log unhandled promise rejections to the file
+process.on('unhandledRejection', (reason, promise) => {
+    winston.error('Unhandled Rejection:', reason, promise);
 });
