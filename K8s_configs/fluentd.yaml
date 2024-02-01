@@ -282,6 +282,9 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        - name: application-log
+          mountPath: /var/log/application.log
+          subPath: application.log
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
         # - name: app-logs
@@ -294,6 +297,9 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
+      - name: application-log
+        hostPath:
+          path: /var/log/application.log
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
