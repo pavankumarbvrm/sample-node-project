@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "latest",
     "ejs": "latest",
-    "morgan": "latest"
+    "morgan": "latest",
+    "winston": "latest"
   }
 }
