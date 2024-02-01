@@ -9,6 +9,12 @@ var app = express();
 const logFilePath = path.join('/var/log', 'application.log');
 winston.add(new winston.transports.File({ filename: logFilePath }));
 
+// Middleware to log requests
+app.use((req, res, next) => {
+    winston.info(`[${new Date()}] ${req.method} ${req.url}`);
+    next();
+});
+
 app.set('port', process.env.PORT || 3005);
 app.set('views', path.join(__dirname, '/app/server/views'));
 app.set('view engine', 'ejs');
