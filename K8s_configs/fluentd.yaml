@@ -108,7 +108,7 @@ data:
     <source>
       @id myapp
       @type tail
-      path /var/log/myapp/*.log
+      path /var/log/*.log
       pos_file /var/log/myapp/app.log.pos
       tag myapp
       <parse>
@@ -117,17 +117,23 @@ data:
     </source>
 
     <match myapp>
-      @id elasticsearch
-      @type elasticsearch
-      host elasticsearch.default
-      port 9200
-      logstash_format true
-      logstash_prefix myapp
-      index_name myapp_index  # Specify the new index pattern
-      <buffer>
-        flush_interval 5s
-      </buffer>
+      @type file
+      path /var/log/output.log
     </match>
+
+
+    # <match myapp>
+    #   @id elasticsearch
+    #   @type elasticsearch
+    #   host elasticsearch.default
+    #   port 9200
+    #   logstash_format true
+    #   logstash_prefix myapp
+    #   index_name myapp_index  # Specify the new index pattern
+    #   <buffer>
+    #     flush_interval 5s
+    #   </buffer>
+    # </match>
     
   parsers.conf: |
     [PARSER]
