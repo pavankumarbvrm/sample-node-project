@@ -1,20 +1,17 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: logging
-
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: fluentd
   namespace: kube-system
-
+  labels:
+    app: fluentd
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: fluentd
+  labels:
+    app: fluentd
 rules:
 - apiGroups:
   - ""
@@ -25,10 +22,9 @@ rules:
   - get
   - list
   - watch
-
 ---
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: fluentd
 roleRef:
@@ -40,576 +36,77 @@ subjects:
   name: fluentd
   namespace: kube-system
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: fluentd-config
-  namespace: kube-system
-data:
-  kubernetes.conf: |-
-    <match fluent.**>
-      @type null
-    </match>
-    
-    <source>
-      @type tail
-      @id in_tail_container_logs
-      path /var/log/containers/*.log
-      exclude_path ["/var/log/containers/kube-apiserver*"]
-      pos_file /var/log/fluentd-containers.log.pos
-      tag kubernetes.*
-      read_from_head true
-      format json
-      time_format %Y-%m-%dT%H:%M:%S.%NZ
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_minion
-      path /var/log/salt/minion
-      pos_file /var/log/fluentd-salt.pos
-      tag salt
-      format /^(?<time>[^ ]* [^ ,]*)[^\[]*\[[^\]]*\]\[(?<severity>[^ \]]*) *\] (?<message>.*)$/
-      time_format %Y-%m-%d %H:%M:%S
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_startupscript
-      path /var/log/startupscript.log
-      pos_file /var/log/fluentd-startupscript.log.pos
-      tag startupscript
-      format syslog
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_docker
-      path /var/log/docker.log
-      pos_file /var/log/fluentd-docker.log.pos
-      tag docker
-      format /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=($<status_code>\d+))?/
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_etcd
-      path /var/log/etcd.log
-      pos_file /var/log/fluentd-etcd.log.pos
-      tag etcd
-      format none
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_kubelet
-      multiline_flush_interval 5s
-      path /var/log/kubelet.log
-      pos_file /var/log/fluentd-kubelet.log.pos
-      tag kubelet
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_kube_proxy
-      multiline_flush_interval 5s
-      path /var/log/kube-proxy.log
-      pos_file /var/log/fluentd-kube-proxy.log.pos
-      tag kube-proxy
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_kube_apiserver
-      multiline_flush_interval 5s
-      path /var/log/kube-apiserver.log
-      pos_file /var/log/fluentd-kube-apiserver.log.pos
-      tag kube-apiserver
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_kube_controller_manager
-      multiline_flush_interval 5s
-      path /var/log/kube-controller-manager.log
-      pos_file /var/log/fluentd-kube-controller-manager.log.pos
-      tag kube-controller-manager
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_kube_scheduler
-      multiline_flush_interval 5s
-      path /var/log/kube-scheduler.log
-      pos_file /var/log/fluentd-kube-scheduler.log.pos
-      tag kube-scheduler
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_rescheduler
-      multiline_flush_interval 5s
-      path /var/log/rescheduler.log
-      pos_file /var/log/fluentd-rescheduler.log.pos
-      tag rescheduler
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_glbc
-      multiline_flush_interval 5s
-      path /var/log/glbc.log
-      pos_file /var/log/fluentd-glbc.log.pos
-      tag glbc
-      format kubernetes
-    </source>
-    
-    <source>
-      @type tail
-      @id in_tail_cluster_autoscaler
-      multiline_flush_interval 5s
-      path /var/log/cluster-autoscaler.log
-      pos_file /var/log/fluentd-cluster-autoscaler.log.pos
-      tag cluster-autoscaler
-      format kubernetes
-    </source>
-    
-    # Example:
-    # 2017-02-09T00:15:57.992775796Z AUDIT: id="90c73c7c-97d6-4b65-9461-f94606ff825f" ip="104.132.1.72" method="GET" user="kubecfg" as="<self>" asgroups="<lookup>" namespace="default" uri="/api/v1/namespaces/default/pods"
-    # 2017-02-09T00:15:57.993528822Z AUDIT: id="90c73c7c-97d6-4b65-9461-f94606ff825f" response="200"
-    <source>
-      @type tail
-      @id in_tail_kube_apiserver_audit
-      multiline_flush_interval 5s
-      path /var/log/kubernetes/kube-apiserver-audit.log
-      pos_file /var/log/kube-apiserver-audit.log.pos
-      tag kube-apiserver-audit
-      format multiline
-      format_firstline /^\S+\s+AUDIT:/
-      # Fields must be explicitly captured by name to be parsed into the record.
-      # Fields may not always be present, and order may change, so this just looks
-      # for a list of key="\"quoted\" value" pairs separated by spaces.
-      # Unknown fields are ignored.
-      # Note: We can't separate query/response lines as format1/format2 because
-      #       they don't always come one after the other for a given query.
-      format1 /^(?<time>\S+) AUDIT:(?: (?:id="(?<id>(?:[^"\\]|\\.)*)"|ip="(?<ip>(?:[^"\\]|\\.)*)"|method="(?<method>(?:[^"\\]|\\.)*)"|user="(?<user>(?:[^"\\]|\\.)*)"|groups="(?<groups>(?:[^"\\]|\\.)*)"|as="(?<as>(?:[^"\\]|\\.)*)"|asgroups="(?<asgroups>(?:[^"\\]|\\.)*)"|namespace="(?<namespace>(?:[^"\\]|\\.)*)"|uri="(?<uri>(?:[^"\\]|\\.)*)"|response="(?<response>(?:[^"\\]|\\.)*)"|\w+="(?:[^"\\]|\\.)*"))*/
-      time_format %FT%T.%L%Z
-    </source>
-    
-    <filter kubernetes.**>
-      @type kubernetes_metadata
-      @id filter_kube_metadata
-    </filter>
-    <filter kubernetes.**>
-      @type record_transformer
-      enable_ruby
-      # Remove unwanted metadata keys
-      <record>
-      for_remove ${record["docker"].delete("container_id");record["kubernetes"].delete("annotations"); record["kubernetes"]["labels"].delete("pod-template-hash"); record["kubernetes"].delete("master_url"); record["kubernetes"].delete("pod_id"); record["kubernetes"].delete("namespace_id");}
-      </record>
-      remove_keys for_remove
-    </filter>
-  output-elasticsearch.conf: |
-    [OUTPUT]
-      Name my-elk-cluster
-      Include_Tag_Key true
-      Tag_Key tags
-      Host 47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io
-      Port 443
-      HTTP_User elastic
-      HTTP_Passwd ArVQyHOSJcIoRFvQuQtLLoHx
-      tls On
-      tls.verify Off
-      Suppress_Type_Name On
-
-
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: fluent-bit-config
-#   namespace: logging
-#   labels:
-#     k8s-app: fluent-bit
-# data:
-#   # Configuration files: server, input, filters and output
-#   # ======================================================
-#   fluent-bit.conf: |
-#     [SERVICE]
-#         Flush         1
-#         Log_Level     info
-#         Daemon        off
-#         Parsers_File  parsers.conf
-#         HTTP_Server   On
-#         HTTP_Listen   0.0.0.0
-#         HTTP_Port     2020
-
-#     @INCLUDE input-kubernetes.conf
-#     @INCLUDE filter-kubernetes.conf
-#     @INCLUDE output-elasticsearch.conf
-
-#   input-kubernetes.conf: |
-#     [INPUT]
-#         Name              tail
-#         Tag               kube.*
-#         Path              /var/log/*.log
-#         Parser            docker
-#         DB                /var/log/flb_kube.db
-#         Mem_Buf_Limit     5MB
-#         Skip_Long_Lines   On
-#         Refresh_Interval  10
-
-#   filter-kubernetes.conf: |
-#     [FILTER]
-#         Name                kubernetes
-#         Match               kube.*
-#         Kube_URL            https://kubernetes.default.svc:443
-#         Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-#         Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
-#         Kube_Tag_Prefix     kube.var.log.containers.
-#         Merge_Log           On
-#         Merge_Log_Key       log_processed
-#         K8S-Logging.Parser  On
-#         K8S-Logging.Exclude Off
-#         Annotations         Off
-#         Labels              On
-  
-#   output-elasticsearch.conf: |
-#     [OUTPUT]
-#       Name my-elk-cluster
-#       Include_Tag_Key true
-#       Tag_Key tags
-#       Host 47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io
-#       Port 443
-#       HTTP_User elastic
-#       HTTP_Passwd ArVQyHOSJcIoRFvQuQtLLoHx
-#       tls On
-#       tls.verify Off
-#       Suppress_Type_Name On
-      
-#   fluent.conf: |
-#     # Fluentd configuration file
-#     # Include the default Kubernetes configuration
-#     @include kubernetes.conf
-#     # Include the custom configuration for myapp
-#     @include myapp.conf
-
-#   myapp.conf: |
-#     # Fluentd configuration for myapp
-#     <source>
-#       @id myapp
-#       @type tail
-#       path /var/log/*.log
-#       pos_file /var/log/app.log.pos
-#       tag myapp
-#       <parse>
-#         @type json
-#       </parse>
-#     </source>
-    
-#     <match myapp>
-#       @id elasticsearch
-#       @type elasticsearch
-#       host elasticsearch.default
-#       port 9200
-#       logstash_format true
-#       logstash_prefix myapp
-#       index_name myapp_index  # Specify the new index pattern
-#       <buffer>
-#         flush_interval 5s
-#       </buffer>
-#     </match>
-    
-#   parsers.conf: |
-#     [PARSER]
-#         Name   apache
-#         Format regex
-#         Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-#         Time_Key time
-#         Time_Format %d/%b/%Y:%H:%M:%S %z
-
-#     [PARSER]
-#         Name   apache2
-#         Format regex
-#         Regex  ^(?<host>[^ ]*) [^ ]* (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^ ]*) +\S*)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-#         Time_Key time
-#         Time_Format %d/%b/%Y:%H:%M:%S %z
-
-#     [PARSER]
-#         Name   apache_error
-#         Format regex
-#         Regex  ^\[[^ ]* (?<time>[^\]]*)\] \[(?<level>[^\]]*)\](?: \[pid (?<pid>[^\]]*)\])?( \[client (?<client>[^\]]*)\])? (?<message>.*)$
-
-#     [PARSER]
-#         Name   nginx
-#         Format regex
-#         Regex ^(?<remote>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")?$
-#         Time_Key time
-#         Time_Format %d/%b/%Y:%H:%M:%S %z
-
-#     [PARSER]
-#         Name   json
-#         Format json
-#         Time_Key time
-#         Time_Format %d/%b/%Y:%H:%M:%S %z
-
-#     [PARSER]
-#         Name        docker
-#         Format      json
-#         Time_Key    time
-#         Time_Format %Y-%m-%dT%H:%M:%S.%L
-#         Time_Keep   On
-
-#     [PARSER]
-#         # http://rubular.com/r/tjUt3Awgg4
-#         Name cri
-#         Format regex
-#         Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
-#         Time_Key    time
-#         Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-
-#     [PARSER]
-#         Name        syslog
-#         Format      regex
-#         Regex       ^\<(?<pri>[0-9]+)\>(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
-#         Time_Key    time
-#         Time_Format %b %d %H:%M:%S
----
-#Elasticsearch ConfigMap
-kind: ConfigMap
-apiVersion: v1
-metadata:
- name: elasticsearch-configmap
- namespace: logging
-data:
- CLOUD_ELASTICSEARCH_ID: https://47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io
- CLOUD_ELASTICSEARCH_HOST: my-elk-cluster:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDQ3YWUxNmRmYjkyOTRlY2E4YzZhNjFmMTZjNDM2ZjNlJDhkYTBhYmJlN2NlODRjNTNiNWI5ZGMwNGYwOGQwMWIy
- CLOUD_ELASTICSEARCH_PORT: '9243'
-
----
-#Elasticsearch Secret
-apiVersion: v1
-kind: Secret
-metadata:
-  name: elasticsearch-secret
-  namespace: logging
-data:
-  CLOUD_ELASTICSEARCH_PASSWORD: QXJWUXlIT1NKY0lvUkZ2UXVRdExMb0h4
-  CLOUD_ELASTICSEARCH_USER: ZWxhc3RpYw==
-type: Opaque
-
-
-# #Elasticsearch Secret
-# kind: Secret
-# apiVersion: v1
-# metadata:
-#  name: elasticsearch-secret
-#  namespace: logging
-# data:
-#  CLOUD_ELASTICSEARCH_PASSWORD: 2sckPLVBDCaLYMGEBdylIJcw
-#  CLOUD_ELASTICSEARCH_USER: elastic
-# type: Opaque
-
----
-
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: fluentd
   namespace: kube-system
   labels:
-    k8s-app: fluentd-logging
-    version: v1
+    app: fluentd
 spec:
   selector:
     matchLabels:
-      k8s-app: fluentd-logging
-      version: v1
+      app: fluentd
   template:
     metadata:
       labels:
-        k8s-app: fluentd-logging
-        version: v1
+        app: fluentd
     spec:
+      serviceAccount: fluentd
+      serviceAccountName: fluentd
       tolerations:
-      - key: node-role.kubernetes.io/control-plane
-        effect: NoSchedule
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
       - name: fluentd
-        image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
+        image: fluent/fluentd-kubernetes-daemonset:v1.14.1-debian-elasticsearch7-1.0
         env:
-          - name: K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: spec.nodeName
           - name:  FLUENT_ELASTICSEARCH_HOST
             value: "47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io"
           - name:  FLUENT_ELASTICSEARCH_PORT
-            value: "9243"
+            value: "443"
           - name: FLUENT_ELASTICSEARCH_SCHEME
             value: "https"
-          # Option to configure elasticsearch plugin with self signed certs
-          # ================================================================
+          - name: FLUENTD_SYSTEMD_CONF
+            value: disable
+          - name: FLUENT_CONTAINER_TAIL_EXCLUDE_PATH
+            value: /var/log/containers/fluent*
           - name: FLUENT_ELASTICSEARCH_SSL_VERIFY
             value: "true"
-          # Option to configure elasticsearch plugin with tls
-          # ================================================================
-          - name: FLUENT_ELASTICSEARCH_SSL_VERSION
-            value: "TLSv1_2"
-          # X-Pack Authentication
-          # =====================
+          - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
+            value: /^(?<time>.+) (?<stream>stdout|stderr)( (?<logtag>.))? (?<log>.*)$/ 
           - name: FLUENT_ELASTICSEARCH_USER
-            value: "elastic"
+            value: "elastic" # The username you've set up for elasticsearch
           - name: FLUENT_ELASTICSEARCH_PASSWORD
             value: "ArVQyHOSJcIoRFvQuQtLLoHx"
-          # Logz.io Authentication
-          # ======================
-          # - name: LOGZIO_TOKEN
-          #   value: "ThisIsASuperLongToken"
-          # - name: LOGZIO_LOGTYPE
-          #   value: "kubernetes"
         resources:
           limits:
-            memory: 200Mi
+            memory: 512Mi
           requests:
             cpu: 100m
             memory: 200Mi
         volumeMounts:
         - name: varlog
           mountPath: /var/log
-        # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
-        # - name: dockercontainerlogdirectory
-        #   mountPath: /var/lib/docker/containers
-        #   readOnly: true
-        # When actual pod logs in /var/log/pods, the following lines should be used.
-        - name: dockercontainerlogdirectory
-          mountPath: /var/log/pods
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
           readOnly: true
       terminationGracePeriodSeconds: 30
       volumes:
       - name: varlog
         hostPath:
           path: /var/log
-      # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
-      # - name: dockercontainerlogdirectory
-      #   hostPath:
-      #     path: /var/lib/docker/containers
-      # When actual pod logs in /var/log/pods, the following lines should be used.
-      - name: dockercontainerlogdirectory
+      - name: varlibdockercontainers
         hostPath:
-          path: /var/log/pods
-
-
-          
-
-# apiVersion: apps/v1
-# kind: DaemonSet
-# metadata:
-#   name: fluent-bit
-#   namespace: logging
-#   labels:
-#     k8s-app: fluent-bit-logging
-#     version: v1
-#     kubernetes.io/cluster-service: "true"
-# spec:
-#   selector:
-#     matchLabels:
-#       k8s-app: fluent-bit-logging
-#   template:
-#     metadata:
-#       labels:
-#         k8s-app: fluent-bit-logging
-#         version: v1
-#         kubernetes.io/cluster-service: "true"
-#       annotations:
-#         prometheus.io/scrape: "true"
-#         prometheus.io/port: "2020"
-#         prometheus.io/path: /api/v1/metrics/prometheus
-#     spec:
-#       containers:
-#       - name: fluent-bit
-#         image: fluent/fluent-bit:2.2.2
-#         imagePullPolicy: Always
-#         ports:
-#           - containerPort: 2020
-#         env:
-#         - name: CLOUD_ELASTICSEARCH_HOST
-#           valueFrom:
-#             configMapKeyRef:
-#               name: elasticsearch-configmap
-#               key: CLOUD_ELASTICSEARCH_HOST
-#         - name: CLOUD_ELASTICSEARCH_PORT
-#           valueFrom:
-#             configMapKeyRef:
-#               name: elasticsearch-configmap
-#               key: CLOUD_ELASTICSEARCH_PORT
-#         - name: CLOUD_ELASTICSEARCH_ID
-#           valueFrom:
-#             configMapKeyRef:
-#               name: elasticsearch-configmap
-#               key: CLOUD_ELASTICSEARCH_ID
-#         - name: CLOUD_ELASTICSEARCH_USER
-#           valueFrom:
-#             secretKeyRef:
-#               name: elasticsearch-secret
-#               key: CLOUD_ELASTICSEARCH_USER
-#         - name: CLOUD_ELASTICSEARCH_PASSWORD
-#           valueFrom:
-#             secretKeyRef:
-#               name: elasticsearch-secret
-#               key: CLOUD_ELASTICSEARCH_PASSWORD
-#         volumeMounts:
-#         - name: varlog
-#           mountPath: /var/log
-#         - name: varlibdockercontainers
-#           mountPath: /var/lib/docker/containers
-#           readOnly: true
-#         - name: application-log
-#           mountPath: /var/log/
-#           subPath: application.log
-#         - name: fluent-bit-config
-#           mountPath: /fluent-bit/etc/
-#         # Add a volume mount for Elasticsearch credentials
-#         - name: elasticsearch-auth
-#           secret:
-#             secretName: elasticsearch-secret
-#             items:
-#             - key: CLOUD_ELASTICSEARCH_ID
-#               path: elastic_id
-#             - key: CLOUD_ELASTICSEARCH_USER
-#               path: elastic_user
-#             - key: CLOUD_ELASTICSEARCH_PASSWORD
-#               path: elastic_password
-#       terminationGracePeriodSeconds: 10
-#       volumes:
-#       - name: varlog
-#         hostPath:
-#           path: /var/log
-#       - name: varlibdockercontainers
-#         hostPath:
-#           path: /var/lib/docker/containers
-#       - name: app-logs
-#         persistentVolumeClaim:
-#           claimName: app-logs-pvc
-#       - name: fluent-bit-config
-#         configMap:
-#           name: fluent-bit-config
-#       # Add a volume for Elasticsearch credentials
-#       - name: elasticsearch-auth
-#         secret:
-#           secretName: elasticsearch-secret
-#   tolerations:
-#   - key: node-role.kubernetes.io/master
-#     operator: Exists
-#     effect: NoSchedule
-#   - operator: "Exists"
-#     effect: "NoExecute"
-#   - operator: "Exists"
-#     effect: "NoSchedule"
+          path: /var/lib/docker/containers
+---
+apiVersion: v1
+kind: Pod
+metadata:
+ name: counter
+spec:
+ containers:
+ - name: count
+   image: busybox
+   args: [/bin/sh, -c,
+           'i=0; while true; do echo "$i: hello, enjoy DevOps Counsel Fluetd demo. Thanks!!"; i=$((i+1)); sleep 1; done']
