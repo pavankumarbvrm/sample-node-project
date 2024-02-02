@@ -18,7 +18,7 @@ steps:
       - '--filename=K8s_configs/'
       - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
       - '--location=us-central1'
-      - '--cluster=applied-well-406512'
+      - '--cluster=applied-well-406512-gke-cluster'
 options:
   logging: CLOUD_LOGGING_ONLY
 # steps:
