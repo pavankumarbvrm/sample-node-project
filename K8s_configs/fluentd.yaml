@@ -297,16 +297,12 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
-      - name: application-log
-        hostPath:
-          path: /var/log/application.log
+      - name: app-logs
+        persistentVolumeClaim:
+          claimName: app-logs-pvc
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
-      # - name: app-logs
-      #   persistentVolumeClaim:
-      #     claimName: app-logs-pvc
-      serviceAccountName: fluent-bit
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
