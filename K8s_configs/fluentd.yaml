@@ -115,25 +115,19 @@ data:
         @type json
       </parse>
     </source>
-
+    
     <match myapp>
-      @type file
-      path /var/log/output.log
+      @id elasticsearch
+      @type elasticsearch
+      host elasticsearch.default
+      port 9200
+      logstash_format true
+      logstash_prefix myapp
+      index_name myapp_index  # Specify the new index pattern
+      <buffer>
+        flush_interval 5s
+      </buffer>
     </match>
-
-
-    # <match myapp>
-    #   @id elasticsearch
-    #   @type elasticsearch
-    #   host elasticsearch.default
-    #   port 9200
-    #   logstash_format true
-    #   logstash_prefix myapp
-    #   index_name myapp_index  # Specify the new index pattern
-    #   <buffer>
-    #     flush_interval 5s
-    #   </buffer>
-    # </match>
     
   parsers.conf: |
     [PARSER]
@@ -197,8 +191,8 @@ metadata:
  name: elasticsearch-configmap
  namespace: logging
 data:
- CLOUD_ELASTICSEARCH_ID: https://65ba6410d3824ef1995cc829817d2865.us-central1.gcp.cloud.es.io
- CLOUD_ELASTICSEARCH_HOST: my-elk:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDY1YmE2NDEwZDM4MjRlZjE5OTVjYzgyOTgxN2QyODY1JDBkOTEzZWVlNDY2NzRiN2NiMTFmZGFjNTQwZDg5NTk2
+ CLOUD_ELASTICSEARCH_ID: https://47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io
+ CLOUD_ELASTICSEARCH_HOST: my-elk-cluster:dXMtY2VudHJhbDEuZ2NwLmNsb3VkLmVzLmlvJDQ3YWUxNmRmYjkyOTRlY2E4YzZhNjFmMTZjNDM2ZjNlJDhkYTBhYmJlN2NlODRjNTNiNWI5ZGMwNGYwOGQwMWIy
  CLOUD_ELASTICSEARCH_PORT: '9243'
 
 ---
@@ -209,9 +203,10 @@ metadata:
   name: elasticsearch-secret
   namespace: logging
 data:
-  CLOUD_ELASTICSEARCH_PASSWORD: MnNja1BMVkJEQ2FMWU1HRUJkeWxJSndjdw==
+  CLOUD_ELASTICSEARCH_PASSWORD: QXJWUXlIT1NKY0lvUkZ2UXVRdExMb0h4
   CLOUD_ELASTICSEARCH_USER: ZWxhc3RpYw==
 type: Opaque
+
 
 # #Elasticsearch Secret
 # kind: Secret
