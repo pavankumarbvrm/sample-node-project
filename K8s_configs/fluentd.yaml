@@ -224,104 +224,196 @@ type: Opaque
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fluent-bit
-  namespace: logging
+  name: fluentd
+  namespace: kube-system
   labels:
-    k8s-app: fluent-bit-logging
+    k8s-app: fluentd-logging
     version: v1
-    kubernetes.io/cluster-service: "true"
 spec:
   selector:
     matchLabels:
-      k8s-app: fluent-bit-logging
+      k8s-app: fluentd-logging
+      version: v1
   template:
     metadata:
       labels:
-        k8s-app: fluent-bit-logging
+        k8s-app: fluentd-logging
         version: v1
-        kubernetes.io/cluster-service: "true"
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "2020"
-        prometheus.io/path: /api/v1/metrics/prometheus
     spec:
+      tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
       containers:
-      - name: fluent-bit
-        image: fluent/fluent-bit:2.2.2
-        imagePullPolicy: Always
-        ports:
-          - containerPort: 2020
+      - name: fluentd
+        image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
         env:
-        - name: CLOUD_ELASTICSEARCH_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: elasticsearch-configmap
-              key: CLOUD_ELASTICSEARCH_HOST
-        - name: CLOUD_ELASTICSEARCH_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: elasticsearch-configmap
-              key: CLOUD_ELASTICSEARCH_PORT
-        - name: CLOUD_ELASTICSEARCH_ID
-          valueFrom:
-            configMapKeyRef:
-              name: elasticsearch-configmap
-              key: CLOUD_ELASTICSEARCH_ID
-        - name: CLOUD_ELASTICSEARCH_USER
-          valueFrom:
-            secretKeyRef:
-              name: elasticsearch-secret
-              key: CLOUD_ELASTICSEARCH_USER
-        - name: CLOUD_ELASTICSEARCH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: elasticsearch-secret
-              key: CLOUD_ELASTICSEARCH_PASSWORD
+          - name: K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name:  FLUENT_ELASTICSEARCH_HOST
+            value: "47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io"
+          - name:  FLUENT_ELASTICSEARCH_PORT
+            value: "443"
+          - name: FLUENT_ELASTICSEARCH_SCHEME
+            value: "https"
+          # Option to configure elasticsearch plugin with self signed certs
+          # ================================================================
+          - name: FLUENT_ELASTICSEARCH_SSL_VERIFY
+            value: "true"
+          # Option to configure elasticsearch plugin with tls
+          # ================================================================
+          - name: FLUENT_ELASTICSEARCH_SSL_VERSION
+            value: "TLSv1_2"
+          # X-Pack Authentication
+          # =====================
+          - name: FLUENT_ELASTICSEARCH_USER
+            value: "elastic"
+          - name: FLUENT_ELASTICSEARCH_PASSWORD
+            value: "ArVQyHOSJcIoRFvQuQtLLoHx"
+          # Logz.io Authentication
+          # ======================
+          # - name: LOGZIO_TOKEN
+          #   value: "ThisIsASuperLongToken"
+          # - name: LOGZIO_LOGTYPE
+          #   value: "kubernetes"
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
         volumeMounts:
         - name: varlog
           mountPath: /var/log
-        - name: varlibdockercontainers
-          mountPath: /var/lib/docker/containers
+        # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+        # - name: dockercontainerlogdirectory
+        #   mountPath: /var/lib/docker/containers
+        #   readOnly: true
+        # When actual pod logs in /var/log/pods, the following lines should be used.
+        - name: dockercontainerlogdirectory
+          mountPath: /var/log/pods
           readOnly: true
-        - name: application-log
-          mountPath: /var/log/
-          subPath: application.log
-        - name: fluent-bit-config
-          mountPath: /fluent-bit/etc/
-        # Add a volume mount for Elasticsearch credentials
-        - name: elasticsearch-auth
-          secret:
-            secretName: elasticsearch-secret
-            items:
-            - key: CLOUD_ELASTICSEARCH_ID
-              path: elastic_id
-            - key: CLOUD_ELASTICSEARCH_USER
-              path: elastic_user
-            - key: CLOUD_ELASTICSEARCH_PASSWORD
-              path: elastic_password
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 30
       volumes:
       - name: varlog
         hostPath:
           path: /var/log
-      - name: varlibdockercontainers
+      # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+      # - name: dockercontainerlogdirectory
+      #   hostPath:
+      #     path: /var/lib/docker/containers
+      # When actual pod logs in /var/log/pods, the following lines should be used.
+      - name: dockercontainerlogdirectory
         hostPath:
-          path: /var/lib/docker/containers
-      - name: app-logs
-        persistentVolumeClaim:
-          claimName: app-logs-pvc
-      - name: fluent-bit-config
-        configMap:
-          name: fluent-bit-config
-      # Add a volume for Elasticsearch credentials
-      - name: elasticsearch-auth
-        secret:
-          secretName: elasticsearch-secret
-  tolerations:
-  - key: node-role.kubernetes.io/master
-    operator: Exists
-    effect: NoSchedule
-  - operator: "Exists"
-    effect: "NoExecute"
-  - operator: "Exists"
-    effect: "NoSchedule"
+          path: /var/log/pods
+
+
+          
+
+# apiVersion: apps/v1
+# kind: DaemonSet
+# metadata:
+#   name: fluent-bit
+#   namespace: logging
+#   labels:
+#     k8s-app: fluent-bit-logging
+#     version: v1
+#     kubernetes.io/cluster-service: "true"
+# spec:
+#   selector:
+#     matchLabels:
+#       k8s-app: fluent-bit-logging
+#   template:
+#     metadata:
+#       labels:
+#         k8s-app: fluent-bit-logging
+#         version: v1
+#         kubernetes.io/cluster-service: "true"
+#       annotations:
+#         prometheus.io/scrape: "true"
+#         prometheus.io/port: "2020"
+#         prometheus.io/path: /api/v1/metrics/prometheus
+#     spec:
+#       containers:
+#       - name: fluent-bit
+#         image: fluent/fluent-bit:2.2.2
+#         imagePullPolicy: Always
+#         ports:
+#           - containerPort: 2020
+#         env:
+#         - name: CLOUD_ELASTICSEARCH_HOST
+#           valueFrom:
+#             configMapKeyRef:
+#               name: elasticsearch-configmap
+#               key: CLOUD_ELASTICSEARCH_HOST
+#         - name: CLOUD_ELASTICSEARCH_PORT
+#           valueFrom:
+#             configMapKeyRef:
+#               name: elasticsearch-configmap
+#               key: CLOUD_ELASTICSEARCH_PORT
+#         - name: CLOUD_ELASTICSEARCH_ID
+#           valueFrom:
+#             configMapKeyRef:
+#               name: elasticsearch-configmap
+#               key: CLOUD_ELASTICSEARCH_ID
+#         - name: CLOUD_ELASTICSEARCH_USER
+#           valueFrom:
+#             secretKeyRef:
+#               name: elasticsearch-secret
+#               key: CLOUD_ELASTICSEARCH_USER
+#         - name: CLOUD_ELASTICSEARCH_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: elasticsearch-secret
+#               key: CLOUD_ELASTICSEARCH_PASSWORD
+#         volumeMounts:
+#         - name: varlog
+#           mountPath: /var/log
+#         - name: varlibdockercontainers
+#           mountPath: /var/lib/docker/containers
+#           readOnly: true
+#         - name: application-log
+#           mountPath: /var/log/
+#           subPath: application.log
+#         - name: fluent-bit-config
+#           mountPath: /fluent-bit/etc/
+#         # Add a volume mount for Elasticsearch credentials
+#         - name: elasticsearch-auth
+#           secret:
+#             secretName: elasticsearch-secret
+#             items:
+#             - key: CLOUD_ELASTICSEARCH_ID
+#               path: elastic_id
+#             - key: CLOUD_ELASTICSEARCH_USER
+#               path: elastic_user
+#             - key: CLOUD_ELASTICSEARCH_PASSWORD
+#               path: elastic_password
+#       terminationGracePeriodSeconds: 10
+#       volumes:
+#       - name: varlog
+#         hostPath:
+#           path: /var/log
+#       - name: varlibdockercontainers
+#         hostPath:
+#           path: /var/lib/docker/containers
+#       - name: app-logs
+#         persistentVolumeClaim:
+#           claimName: app-logs-pvc
+#       - name: fluent-bit-config
+#         configMap:
+#           name: fluent-bit-config
+#       # Add a volume for Elasticsearch credentials
+#       - name: elasticsearch-auth
+#         secret:
+#           secretName: elasticsearch-secret
+#   tolerations:
+#   - key: node-role.kubernetes.io/master
+#     operator: Exists
+#     effect: NoSchedule
+#   - operator: "Exists"
+#     effect: "NoExecute"
+#   - operator: "Exists"
+#     effect: "NoSchedule"
