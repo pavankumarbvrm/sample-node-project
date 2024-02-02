@@ -283,12 +283,21 @@ spec:
           mountPath: /var/lib/docker/containers
           readOnly: true
         - name: application-log
-          mountPath: /var/log/application.log
+          mountPath: /var/log/
           subPath: application.log
         - name: fluent-bit-config
           mountPath: /fluent-bit/etc/
-        # - name: app-logs
-        #   mountPath: /var/log/nginx
+        # Add a volume mount for Elasticsearch credentials
+        - name: elasticsearch-auth
+          secret:
+            secretName: elasticsearch-secret
+            items:
+            - key: CLOUD_ELASTICSEARCH_ID
+              path: elastic_id
+            - key: CLOUD_ELASTICSEARCH_USER
+              path: elastic_user
+            - key: CLOUD_ELASTICSEARCH_PASSWORD
+              path: elastic_password
       terminationGracePeriodSeconds: 10
       volumes:
       - name: varlog
@@ -303,11 +312,15 @@ spec:
       - name: fluent-bit-config
         configMap:
           name: fluent-bit-config
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
-      - operator: "Exists"
-        effect: "NoExecute"
-      - operator: "Exists"
-        effect: "NoSchedule"
+      # Add a volume for Elasticsearch credentials
+      - name: elasticsearch-auth
+        secret:
+          secretName: elasticsearch-secret
+  tolerations:
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  - operator: "Exists"
+    effect: "NoExecute"
+  - operator: "Exists"
+    effect: "NoSchedule"
