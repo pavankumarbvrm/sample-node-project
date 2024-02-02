@@ -85,13 +85,13 @@ data:
   
   output-elasticsearch.conf: |
     [OUTPUT]
-      Name es
+      Name my-elk-cluster
       Include_Tag_Key true
       Tag_Key tags
-      Host 65ba6410d3824ef1995cc829817d2865.us-central1.gcp.cloud.es.io
+      Host 47ae16dfb9294eca8c6a61f16c436f3e.us-central1.gcp.cloud.es.io
       Port 443
       HTTP_User elastic
-      HTTP_Passwd 2sckPLVBDCaLYMGEBdylIJcw
+      HTTP_Passwd ArVQyHOSJcIoRFvQuQtLLoHx
       tls On
       tls.verify Off
       Suppress_Type_Name On
@@ -109,7 +109,7 @@ data:
       @id myapp
       @type tail
       path /var/log/*.log
-      pos_file /var/log/myapp/app.log.pos
+      pos_file /var/log/app.log.pos
       tag myapp
       <parse>
         @type json
