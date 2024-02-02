@@ -1,42 +1,65 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1', '.']
-    timeout: '180s'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+      - .
+    timeout: 180s
 
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1']
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
 
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   args: ['build', '-t', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2', '-f', 'Dockerfile2', '.']
-  #   timeout: '180s'
-
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   args: ['push', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2']
-
-    - name: 'gcr.io/cloud-builders/gke-deploy'
-      args:
-        - 'bash'
-        - '-c'
-        - |
-          find K8s_configs/ -type f -name '*.yaml' -print0 | xargs -0 -I {} gcr.io/cloud-builders/kubectl apply -f {}
-        - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
-        - '--location=us-central1'
-        - '--cluster=applied-well-406512-gke-cluster'
-    
-  # - name: 'gcr.io/cloud-builders/gsutil'
-  #   args: ['rm', '-r', 'output/suggested']
-
-  # - name: 'gcr.io/cloud-builders/gke-deploy'
-  #   args: ['run', '--filename=K8s_configs/deployment-v2.yaml', '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp2:v2', '--location=us-central1', '--cluster=applied-well-406512-gke-cluster']
-
+  - name: gcr.io/cloud-builders/gke-deploy
+    args:
+      - run
+      - '--filename=K8s_configs/'
+      - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+      - '--location=us-central1'
+      - '--cluster=applied-well-406512'
 options:
   logging: CLOUD_LOGGING_ONLY
+# steps:
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['build', '-t', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1', '.']
+#     timeout: '180s'
+
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['push', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v1']
+
+#   # - name: 'gcr.io/cloud-builders/docker'
+#   #   args: ['build', '-t', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2', '-f', 'Dockerfile2', '.']
+#   #   timeout: '180s'
+
+#   # - name: 'gcr.io/cloud-builders/docker'
+#   #   args: ['push', 'us-docker.pkg.dev/applied-well-406512/docker/myapp:v2']
+
+#     - name: 'gcr.io/cloud-builders/gke-deploy'
+#       args:
+#         - 'bash'
+#         - '-c'
+#         - |
+#           find K8s_configs/ -type f -name '*.yaml' -print0 | xargs -0 -I {} gcr.io/cloud-builders/kubectl apply -f {}
+#         - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v1'
+#         - '--location=us-central1'
+#         - '--cluster=applied-well-406512-gke-cluster'
+    
+#   # - name: 'gcr.io/cloud-builders/gsutil'
+#   #   args: ['rm', '-r', 'output/suggested']
+
+#   # - name: 'gcr.io/cloud-builders/gke-deploy'
+#   #   args: ['run', '--filename=K8s_configs/deployment-v2.yaml', '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp2:v2', '--location=us-central1', '--cluster=applied-well-406512-gke-cluster']
+
+# options:
+#   logging: CLOUD_LOGGING_ONLY
 
 
-  # - name: gcr.io/cloud-builders/gke-deploy
-  #   args:
-  #     - run
-  #     - '--filename=K8s_configs/deployment-v2.yaml'  # Specify the deployment file for v2
-  #     - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'
-  #     - '--location=us-central1'
-  #     - '--cluster=applied-well-406512-gke-cluster'
+#   # - name: gcr.io/cloud-builders/gke-deploy
+#   #   args:
+#   #     - run
+#   #     - '--filename=K8s_configs/deployment-v2.yaml'  # Specify the deployment file for v2
+#   #     - '--image=us-docker.pkg.dev/applied-well-406512/docker/myapp:v2'
+#   #     - '--location=us-central1'
+#   #     - '--cluster=applied-well-406512-gke-cluster'
