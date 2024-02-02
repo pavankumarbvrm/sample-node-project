@@ -126,5 +126,5 @@ spec:
         - name: app-logs-volume
           persistentVolumeClaim:
             claimName: app-logs-pvc
-        imagePullSecrets:
-          - name: gcr-secret
+      imagePullSecrets:
+        - name: gcr-secret
