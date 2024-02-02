@@ -125,12 +125,12 @@ spec:
       #   ports:
       #       - containerPort: 4005
             
-      #     volumeMounts:
-      #       - name: app-logs-volume
-      #         mountPath: /var/log/myapp
-      # volumes:
-      #   - name: app-logs-volume
-      #     persistentVolumeClaim:
-      #       claimName: app-logs-pvc
+    volumeMounts:
+      - name: app-logs-volume
+        mountPath: /var/log/
+      volumes:
+        - name: app-logs-volume
+          persistentVolumeClaim:
+            claimName: app-logs-pvc
       imagePullSecrets:
         - name: gcr-secret
