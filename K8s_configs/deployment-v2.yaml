@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: myapp2-container
-        image: us-docker.pkg.dev/applied-well-406512/docker/myapp2:v2
+        image: us-docker.pkg.dev/applied-well-406512/docker/myapp:v1
         # command: ["pm2-runtime", "start", "app2.js", "--name", "my-app2"]
         ports:
-            - containerPort: 4005
+            - containerPort: 3005
             
       #     volumeMounts:
       #       - name: app-logs-volume
